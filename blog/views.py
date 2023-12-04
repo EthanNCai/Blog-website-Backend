@@ -5,7 +5,7 @@ from django.conf import settings
 import os
 from django.shortcuts import get_object_or_404
 def blogFlow(request):
-    blog_objects = BlogInfo.objects.all()
+    blog_objects = BlogInfo.objects.all().order_by('-blog_date')
 
     blog_list = []
     for blog in blog_objects:
@@ -22,7 +22,6 @@ def blogFlow(request):
         blog_list.append(blog_dict)
 
     return JsonResponse(blog_list, safe=False)
-
 def blog_flow_by_keyword(request, keyword):
     blog_objects = BlogInfo.objects.all()
 

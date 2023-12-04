@@ -43,12 +43,12 @@ def blog_flow_by_keyword(request, keyword):
     return JsonResponse(blog_list, safe=False)
 
 def blogAvatar(request, id):
-    image_path = os.path.join(settings.BASE_DIR,'blog','Blogs', str(id), 'icon.jpg')
+    image_path = os.path.join(settings.BASE_DIR,'blog','Blogs', str(id), 'icon.webp')
 
     try:
         with open(image_path, 'rb') as f:
             image_data = f.read()
-        response = HttpResponse(content_type='image/jpeg')
+        response = HttpResponse(content_type='image/webp')
         response.write(image_data)
         return response
     except IOError:

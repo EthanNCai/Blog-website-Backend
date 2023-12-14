@@ -212,7 +212,7 @@ def assists_get_brief(request, major_name):
     if request.method == 'GET':
         try:
             total_populations = Student.objects.filter(major=major_name).count()
-            applied_populations = Student.objects.filter(major=major_name, jobs__isnull=False).count()
+            applied_populations = Student.objects.filter(major=major_name, jobs__isnull=False).distinct().count()
             max_wage_obj = Job.objects.filter(student_job_fk__major=major_name).aggregate(Max('salary'))
             min_wage_obj = Job.objects.filter(student_job_fk__major=major_name).aggregate(Min('salary'))
             no_jobs_populations = Student.objects.filter(major=major_name, jobs__isnull=True).count()
@@ -402,7 +402,23 @@ def assists_admin_get_brief(request):
 """
 APIs for JobManagers or WorkStudyAdmin
 """
+def real_job_manager_load_jobs(request):
+    # find all jobs
 
+    jobs_objects = Job.objects.all()
+    jobs_list = []
+    for job in jobs_objects:
+        job_dict = {
+            'job_number': job.job_number,
+            'is_approved': job.is_approved,
+            'job_title': job.job_title,
+            'job_content': job.job_content,
+            'salary': job.salary,
+            'feedback': job.feedback
+        }
+        jobs_list.append(job_dict)
+
+    return JsonResponse(jobs_list, safe=False)
 
 def job_manager_approve_job(request, job_manager_id, job_number):
     # find job manager's obj according to job_manager_id
@@ -433,24 +449,6 @@ def job_manager_load_jobs(request, job_manager_id):
 
     return JsonResponse(jobs_list, safe=False)
 
-# VIP
-def real_job_manager_load_jobs(request):
-    # find all jobs
-
-    jobs_objects = Job.objects.all()
-    jobs_list = []
-    for job in jobs_objects:
-        job_dict = {
-            'job_number': job.job_number,
-            'is_approved': job.is_approved,
-            'job_title': job.job_title,
-            'job_content': job.job_content,
-            'salary': job.salary,
-            'feedback': job.feedback
-        }
-        jobs_list.append(job_dict)
-
-    return JsonResponse(jobs_list, safe=False)
 
 """
 APIs for company or Employer
@@ -510,10 +508,6 @@ def submit_job_feedback(request, employer_id, job_number, job_feedback):
     response_data = {'message:': f'{employer.employer_name}: Feedback has been submitted'}
 
     return JsonResponse(response_data, status=200)
-
-
-
-
 def real_get_students_for_job(request, employer_id, job_number):
     employers = Employer.objects.all()
     for employer in employers:

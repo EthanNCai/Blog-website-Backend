@@ -34,6 +34,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 INSTALLED_APPS = [
     'corsheaders',
     'blog.apps.BlogConfig',
+    "campusapp.apps.CampusappConfig",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

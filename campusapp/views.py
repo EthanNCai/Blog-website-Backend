@@ -212,7 +212,7 @@ def assists_get_brief(request, major_name):
     if request.method == 'GET':
         try:
             total_populations = Student.objects.filter(major=major_name).count()
-            applied_populations = Student.objects.filter(major=major_name, jobs__isnull=False).distinct().count()
+            applied_populations = Student.objects.filter(major=major_name, jobs__isnull=False).count()
             max_wage_obj = Job.objects.filter(student_job_fk__major=major_name).aggregate(Max('salary'))
             min_wage_obj = Job.objects.filter(student_job_fk__major=major_name).aggregate(Min('salary'))
             no_jobs_populations = Student.objects.filter(major=major_name, jobs__isnull=True).count()

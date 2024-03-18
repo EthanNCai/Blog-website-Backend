@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.conf import settings
 import os
 from django.shortcuts import get_object_or_404
+
+
 def blogFlow(request):
     blog_objects = BlogInfo.objects.all().order_by('-blog_date')
 
@@ -22,6 +24,8 @@ def blogFlow(request):
         blog_list.append(blog_dict)
 
     return JsonResponse(blog_list, safe=False)
+
+
 def blog_flow_by_keyword(request, keyword):
     blog_objects = BlogInfo.objects.all()
 
@@ -42,8 +46,9 @@ def blog_flow_by_keyword(request, keyword):
 
     return JsonResponse(blog_list, safe=False)
 
+
 def blogAvatar(request, id):
-    image_path = os.path.join(settings.BASE_DIR,'blog','Blogs', str(id), 'icon.webp')
+    image_path = os.path.join(settings.BASE_DIR, 'blog', 'Blogs', str(id), 'icon.webp')
 
     try:
         with open(image_path, 'rb') as f:
@@ -53,20 +58,22 @@ def blogAvatar(request, id):
         return response
     except IOError:
         return HttpResponse(status=404)
-    
+
+
 def blogArticle(request, id):
     markdown_path = os.path.join(settings.BASE_DIR, 'blog', 'Blogs', str(id), 'article.md')
 
     try:
         with open(markdown_path, 'r', encoding='utf-8') as f:
             markdown_content = f.read()
-        
+
         response = HttpResponse(content_type='text/plain')
         response.write(markdown_content)
         return response
     except IOError:
         return HttpResponse(status=404)
-    
+
+
 # return the blog information according to the blog_id
 def blog_find_id(request, id):
     blog = get_object_or_404(BlogInfo, blog_id=id)
@@ -85,6 +92,7 @@ def blog_find_id(request, id):
     }
     return JsonResponse(blog_dict)
 
+
 # blog.likes++ according to the blog_id
 def blog_likes_increase(request, id):
     blog = get_object_or_404(BlogInfo, blog_id=id)
@@ -92,17 +100,19 @@ def blog_likes_increase(request, id):
     blog.save()
     return HttpResponse("success!")
 
+
 # blog.likes-- according to the blog_id
 def blog_likes_decrease(request, id):
     blog = get_object_or_404(BlogInfo, blog_id=id)
-    
+
     if blog.blog_likes > 0:
         blog.blog_likes -= 1
         blog.save()
         return HttpResponse("success!")
     else:
         return HttpResponse("likes must be a positive numberw")
-    
+
+
 # blog.likes++ according to the blog_id
 def blog_hates_increase(request, id):
     blog = get_object_or_404(BlogInfo, blog_id=id)
@@ -110,10 +120,11 @@ def blog_hates_increase(request, id):
     blog.save()
     return HttpResponse("success!")
 
+
 # blog.likes-- according to the blog_id
 def blog_hates_decrease(request, id):
     blog = get_object_or_404(BlogInfo, blog_id=id)
-    
+
     if blog.blog_hates > 0:
         blog.blog_hates -= 1
         blog.save()

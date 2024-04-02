@@ -1,3 +1,5 @@
+import time
+
 from django.http import JsonResponse
 from .models import BlogInfo
 from django.http import HttpResponse
@@ -7,7 +9,16 @@ from django.shortcuts import get_object_or_404
 
 
 def blogFlow(request):
-    blog_objects = BlogInfo.objects.all().order_by('-blog_date')
+
+    max_attempts = 10
+    attempt_count = 0
+    while attempt_count < max_attempts:
+        try:
+            blog_objects = BlogInfo.objects.all().order_by('-blog_date')
+            break
+        except Exception as e:
+            attempt_count += 1
+            time.sleep(0.3)
 
     blog_list = []
     for blog in blog_objects:
@@ -130,4 +141,4 @@ def blog_hates_decrease(request, id):
         blog.save()
         return HttpResponse("success!")
     else:
-        return HttpResponse("hates must be a positive numberw")
+        return HttpResponse("hates must be a positive number")
